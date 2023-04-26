@@ -138,12 +138,6 @@ export interface UpdateOptions<T = unknown> extends Nullable<ToastOptions<T>> {
 
 export interface ToastContainerProps extends CommonOptions {
   /**
-   * Whether or not to display the newest toast on top.
-   * `Default: false`
-   */
-  newestOnTop?: boolean;
-
-  /**
    * Show the toast only if it includes containerId and it's the same as containerId
    * `Default: false`
    */

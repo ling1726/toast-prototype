@@ -235,15 +235,19 @@ export function useToastContainer(props: ToastContainerProps) {
     const toRender = new Map<ToastPosition, Toast[]>();
     const collection = Array.from(toastToRender.values());
 
-    if (props.newestOnTop) collection.reverse();
-
     collection.forEach((toast) => {
       const { position } = toast.props;
       toRender.has(position) || toRender.set(position, []);
       toRender.get(position)!.push(toast);
     });
 
-    return Array.from(toRender, (p) => cb(p[0], p[1]));
+    return Array.from(toRender, ([position, toasts]) => {
+      if (position.startsWith('top')) {
+        toasts.reverse();
+      }
+
+      return cb(position, toasts);
+    });
   }
 
   return {
