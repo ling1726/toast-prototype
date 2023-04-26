@@ -1,13 +1,13 @@
-import * as React from 'react';
+import * as React from "react";
 import {
   canBeRendered,
   isFn,
   isNum,
   isStr,
   getAutoCloseDelay,
-  toToastItem
-} from '../utils';
-import { eventManager, Event } from '../core/eventManager';
+  toToastItem,
+} from "../utils";
+import { eventManager, Event } from "../core/eventManager";
 
 import {
   Id,
@@ -17,8 +17,8 @@ import {
   Toast,
   ToastPosition,
   ClearWaitingQueueParams,
-  NotValidatedToastProps
-} from '../types';
+  NotValidatedToastProps,
+} from "../types";
 
 interface QueuedToast {
   toastContent: ToastContent;
@@ -38,7 +38,7 @@ export interface ContainerInstance {
 }
 
 export function useToastContainer(props: ToastContainerProps) {
-  const [, forceUpdate] = React.useReducer(x => x + 1, 0);
+  const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
   const [toastIds, setToastIds] = React.useState<Id[]>([]);
   const containerRef = React.useRef(null);
   const toastToRender = React.useRef(new Map<Id, Toast>()).current;
@@ -51,19 +51,25 @@ export function useToastContainer(props: ToastContainerProps) {
     props,
     containerId: null,
     isToastActive,
-    getToast: id => toastToRender.get(id)
+    getToast: (id) => toastToRender.get(id),
   }).current;
 
   React.useEffect(() => {
     instance.containerId = props.containerId;
+    const clearToasts = (toastId: Id | undefined) =>
+      containerRef.current && removeToast(toastId);
     eventManager
       .cancelEmit(Event.WillUnmount)
       .on(Event.Show, buildToast)
-      .on(Event.Clear, toastId => containerRef.current && removeToast(toastId))
+      .on(Event.Clear, clearToasts)
       .on(Event.ClearWaitingQueue, clearWaitingQueue)
       .emit(Event.DidMount, instance);
 
     return () => {
+      eventManager
+        .off(Event.Show, buildToast)
+        .off(Event.Clear, clearToasts)
+        .off(Event.ClearWaitingQueue, clearWaitingQueue);
       toastToRender.clear();
       eventManager.emit(Event.WillUnmount, instance);
     };
@@ -84,8 +90,8 @@ export function useToastContainer(props: ToastContainerProps) {
   }
 
   function removeToast(toastId?: Id) {
-    setToastIds(state =>
-      toastId == null ? [] : state.filter(id => id !== toastId)
+    setToastIds((state) =>
+      toastId == null ? [] : state.filter((id) => id !== toastId)
     );
   }
 
@@ -123,12 +129,11 @@ export function useToastContainer(props: ToastContainerProps) {
 
     if (isNotAnUpdate) instance.count++;
 
-
     const toastProps: ToastProps = {
       ...props,
-      position: props.position ?? 'bottom-right',
+      position: props.position ?? "bottom-right",
       draggablePercent: props.draggablePercent ?? 80,
-      type: 'default',
+      type: "default",
       key: instance.toastKey++,
       ...Object.fromEntries(
         Object.entries(options).filter(([_, v]) => v != null)
@@ -142,7 +147,7 @@ export function useToastContainer(props: ToastContainerProps) {
         ? false
         : getAutoCloseDelay(options.autoClose, props.autoClose),
       deleteToast() {
-        const removed = toToastItem(toastToRender.get(toastId)!, 'removed');
+        const removed = toToastItem(toastToRender.get(toastId)!, "removed");
         toastToRender.delete(toastId);
 
         eventManager.emit(Event.Change, removed);
@@ -170,7 +175,7 @@ export function useToastContainer(props: ToastContainerProps) {
         } else {
           forceUpdate();
         }
-      }
+      },
     };
 
     let toastContent = content;
@@ -179,7 +184,7 @@ export function useToastContainer(props: ToastContainerProps) {
       toastContent = React.cloneElement(content as React.ReactElement, {
         closeToast,
         toastProps,
-        data
+        data,
       });
     } else if (isFn(content)) {
       toastContent = content({ closeToast, toastProps, data });
@@ -213,14 +218,14 @@ export function useToastContainer(props: ToastContainerProps) {
 
     const toast = {
       content,
-      props: toastProps
+      props: toastProps,
     };
     toastToRender.set(toastId, toast);
 
-    setToastIds(state => [...state, toastId].filter(id => id !== staleId));
+    setToastIds((state) => [...state, toastId].filter((id) => id !== staleId));
     eventManager.emit(
       Event.Change,
-      toToastItem(toast, toast.props.updateId == null ? 'added' : 'updated')
+      toToastItem(toast, toast.props.updateId == null ? "added" : "updated")
     );
   }
 
@@ -232,18 +237,18 @@ export function useToastContainer(props: ToastContainerProps) {
 
     if (props.newestOnTop) collection.reverse();
 
-    collection.forEach(toast => {
+    collection.forEach((toast) => {
       const { position } = toast.props;
       toRender.has(position) || toRender.set(position, []);
       toRender.get(position)!.push(toast);
     });
 
-    return Array.from(toRender, p => cb(p[0], p[1]));
+    return Array.from(toRender, (p) => cb(p[0], p[1]));
   }
 
   return {
     getToastToRender,
     containerRef,
-    isToastActive
+    isToastActive,
   };
 }
