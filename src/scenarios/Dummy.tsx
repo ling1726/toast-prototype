@@ -1,6 +1,6 @@
 import { toast } from '../react-toastify';
 import { RendererProvider, createDOMRenderer } from "@griffel/react";
-import { Toaster } from '../Toaster';
+import { Toaster } from '../components/Toaster';
 
 const renderer = createDOMRenderer(document);
 
