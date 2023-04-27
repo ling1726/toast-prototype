@@ -149,6 +149,8 @@ export interface ToastContainerProps extends CommonOptions {
   limit?: number;
 
   targetDocument: Document | null | undefined;
+
+  boundary?: HTMLElement;
 }
 
 export interface ToastTransitionProps {

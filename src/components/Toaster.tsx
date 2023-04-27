@@ -8,52 +8,23 @@ interface ToasterProps {
   position: ToastPosition;
   targetDocument: Document | null | undefined;
   limit?: number;
+  boundary?: HTMLElement;
 }
 
 const useStyles = makeStyles({
   container: {
     position: "fixed",
   },
-
-  "top-right": {
-    top: 0,
-    right: 0,
-  },
-
-  "top-center": {
-    top: 0,
-    left: "50%",
-    transform: "translateX(-50%)",
-  },
-
-  "top-left": {
-    top: 0,
-    let: 0,
-  },
-
-  "bottom-right": {
-    bottom: 0,
-    right: 0,
-  },
-
-  "bottom-center": {
-    bottom: 0,
-    left: "50%",
-    transform: "translateX(-50%)",
-  },
-
-  "bottom-left": {
-    bottom: 0,
-    left: 0,
-  },
 });
 
 export const Toaster: React.FC<ToasterProps> = (props) => {
-  const { targetDocument, limit } = props;
-  const { containerRef, getToastToRender, isToastActive } = useToastContainer({
+  const { targetDocument, limit, boundary } = props;
+  const { containerRef, getToastToRender, isToastActive, positions } = useToastContainer({
     targetDocument,
     limit,
+    boundary,
   });
+
 
   const styles = useStyles();
 
@@ -63,8 +34,9 @@ export const Toaster: React.FC<ToasterProps> = (props) => {
         ref={containerRef}
       >
         {getToastToRender((position, toasts) => {
+          const positionStyles = positions[position];
           return (
-            <div key={position} className={mergeClasses(styles.container, styles[position])}>
+            <div key={position} style={positionStyles} className={mergeClasses(styles.container)}>
               {toasts.map(({ content, props: toastProps }, i) => {
                 return (
                   <Toast

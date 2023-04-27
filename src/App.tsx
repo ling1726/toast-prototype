@@ -5,7 +5,7 @@ const scenarios = import.meta.glob("./scenarios/*.tsx", { eager: true });
 function App() {
   const names = Object.keys(scenarios).map((key) => key.split("/")[2]);
   const [scenario, setScenario] = React.useState(
-    () => Object.keys(scenarios)[2]
+    () => Object.keys(scenarios)[1]
   );
 
   const onChange = (e: React.FormEvent) => {
@@ -13,6 +13,8 @@ function App() {
     const nextScenario = `./scenarios/${target.name}`;
     setScenario(nextScenario);
   };
+
+  const Scenario = scenarios[scenario].default;
 
   return (
     <>
@@ -31,7 +33,7 @@ function App() {
           </div>
         ))}
       </div>
-      {(scenarios[scenario] as any).default()}
+      <Scenario />
     </>
   );
 }

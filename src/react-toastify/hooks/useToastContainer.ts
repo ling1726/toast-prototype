@@ -242,7 +242,7 @@ export function useToastContainer(props: ToastContainerProps) {
     });
 
     return Array.from(toRender, ([position, toasts]) => {
-      if (position.startsWith('top')) {
+      if (position.startsWith("top")) {
         toasts.reverse();
       }
 
@@ -250,9 +250,63 @@ export function useToastContainer(props: ToastContainerProps) {
     });
   }
 
+  let positions: object = {
+    "top-right": {
+      top: 0,
+      right: 0,
+    },
+
+    "top-left": {
+      top: 0,
+      left: 0,
+    },
+
+    "bottom-right": {
+      bottom: 0,
+      right: 0,
+    },
+
+    "bottom-left": {
+      bottom: 0,
+      left: 0,
+    },
+  };
+
+  if (props.boundary) {
+    console.log(props.boundary);
+    const rect = props.boundary.getBoundingClientRect();
+
+    positions = {
+      "top-right": {
+        top: rect.top,
+        left: rect.right,
+        transform: "translateX(-100%)",
+      },
+
+      "top-left": {
+        top: rect.top,
+        left: rect.left,
+      },
+
+      "bottom-right": {
+        top: rect.bottom,
+        left: rect.right,
+        transform: "translate(-100%, -100%)",
+      },
+
+      "bottom-left": {
+        top: rect.bottom,
+        left: rect.left,
+        transform: "translateY(-100%)",
+      },
+    };
+  }
+
   return {
     getToastToRender,
     containerRef,
     isToastActive,
+    boundary: props.boundary,
+    positions,
   };
 }
