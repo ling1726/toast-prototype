@@ -3,6 +3,8 @@ import { Transition } from "react-transition-group";
 import { makeStyles, mergeClasses, shorthands } from "@griffel/react";
 import { useToast, ToastProps } from "../react-toastify";
 import { ToastContextProvider } from "../contexts/toastContext";
+import { Timer } from "./Timer";
+import { useTimeout } from "../react-toastify/utils/useTimeout";
 
 const useStyles = makeStyles({
   toast: {
@@ -14,7 +16,7 @@ const useStyles = makeStyles({
     minWidth: "200px",
     maxWidth: "200px",
     alignItems: "center",
-    backgroundColor: 'white',
+    backgroundColor: "white",
   },
 
   slide: {
@@ -38,8 +40,8 @@ const useStyles = makeStyles({
         },
         to: {
           opacity: 1,
-        }
-      }
+        },
+      },
     ],
   },
 
@@ -73,11 +75,22 @@ const useStyles = makeStyles({
 export const Toast: React.FC<ToastProps> = (props) => {
   const styles = useStyles();
   const { isIn, children, closeToast, deleteToast, autoClose = 3000 } = props;
-  const { eventHandlers, toastRef } = useToast(props);
+  const { eventHandlers, toastRef, playToast, isRunning } = useToast(props);
 
-  React.useEffect(() => {
-    setTimeout(closeToast, autoClose as number);
-  }, []);
+  useTimeout(closeToast, { duration: autoClose as number, isRunning });
+
+  // start the toast once it's fully in
+  React.useLayoutEffect(() => {
+    if (toastRef.current) {
+      toastRef.current?.addEventListener(
+        "animationend",
+        () => {
+          playToast();
+        },
+        { once: true }
+      );
+    }
+  }, [playToast]);
 
   return (
     <Transition

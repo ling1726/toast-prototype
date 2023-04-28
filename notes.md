@@ -22,7 +22,7 @@
 - ✅ different positions
 - ✅ offset
 - Updates
-- sliding after middle toast is dismissed
+- ✅ sliding after middle toast is dismissed
 - pause on blur
 - priority toasts
 
