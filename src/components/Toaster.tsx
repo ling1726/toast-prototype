@@ -22,6 +22,7 @@ export const Toaster: React.FC<ToasterProps> = (props) => {
     targetDocument,
     limit,
     offset,
+    autoClose: 3000,
   });
 
 

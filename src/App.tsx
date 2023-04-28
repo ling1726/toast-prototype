@@ -5,7 +5,7 @@ const scenarios = import.meta.glob("./scenarios/*.tsx", { eager: true });
 function App() {
   const names = Object.keys(scenarios).map((key) => key.split("/")[2]);
   const [scenario, setScenario] = React.useState(
-    () => Object.keys(scenarios)[5]
+    () => Object.keys(scenarios)[6]
   );
 
   const onChange = (e: React.FormEvent) => {

@@ -1,10 +1,10 @@
 import React from "react";
 import { Transition } from "react-transition-group";
 import { makeStyles, mergeClasses, shorthands } from "@griffel/react";
-import { useToast, ToastProps } from "../react-toastify";
+import { useToast, ToastProps, toast } from "../react-toastify";
 import { ToastContextProvider } from "../contexts/toastContext";
-import { Timer } from "./Timer";
 import { useTimeout } from "../react-toastify/utils/useTimeout";
+import { Timer } from "./Timer";
 
 const useStyles = makeStyles({
   toast: {
@@ -74,21 +74,19 @@ const useStyles = makeStyles({
 
 export const Toast: React.FC<ToastProps> = (props) => {
   const styles = useStyles();
-  const { isIn, children, closeToast, deleteToast, autoClose = 3000 } = props;
+  const { isIn, children, closeToast, deleteToast, autoClose } = props;
   const { eventHandlers, toastRef, playToast, isRunning } = useToast(props);
-
-  useTimeout(closeToast, { duration: autoClose as number, isRunning });
 
   // start the toast once it's fully in
   React.useLayoutEffect(() => {
     if (toastRef.current) {
-      toastRef.current?.addEventListener(
-        "animationend",
-        () => {
-          playToast();
-        },
-        { once: true }
-      );
+      toastRef.current?.addEventListener("animationend", playToast, {
+        once: true,
+      });
+
+      return () => {
+        toastRef.current?.removeEventListener("animationend", playToast);
+      };
     }
   }, [playToast]);
 
@@ -111,6 +109,11 @@ export const Toast: React.FC<ToastProps> = (props) => {
           {...eventHandlers}
         >
           {children as React.ReactNode}
+          <Timer
+            onTimeout={closeToast}
+            timeout={!autoClose ? -1 : autoClose}
+            isRunning={isRunning}
+          />
         </div>
       </ToastContextProvider>
     </Transition>

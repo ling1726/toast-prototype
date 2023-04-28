@@ -21,9 +21,9 @@
 - ✅ dismiss all toasts 
 - ✅ different positions
 - ✅ offset
-- Updates
+- ✅ Updates
 - ✅ sliding after middle toast is dismissed
-- pause on blur
+- ✅ pause on blur
 - priority toasts
 
 ## ally 
