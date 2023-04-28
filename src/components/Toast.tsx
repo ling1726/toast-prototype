@@ -17,63 +17,24 @@ const useStyles = makeStyles({
     backgroundColor: 'white',
   },
 
-  slideVertical: {
-    animationDuration: "200ms",
-    animationDelay: "200msms, 0ms, 0ms",
-    animationName: [
-      {
-        from: {
-          transform: "translate3d(0, -10%, 0)",
-        },
-        to: {
-          transform: "translate3d(0, 0, 0)",
-        },
-      },
-      {
-        from: {
-          height: "0",
-          minHeight: "0",
-          maxHeight: "0",
-        },
-        to: {
-        },
-      },
-      {
-        from: {
-          opactity: 0,
-        },
-        to: {
-          opacity: 1,
-        }
-      }
-    ],
-
-  },
-
   slide: {
-    animationDuration: "200ms",
-    animationDelay: "200msms, 0ms, 0ms",
+    animationDuration: "200ms, 400ms",
+    animationDelay: "0ms, 200ms",
     animationName: [
-      {
-        from: {
-          transform: "translate3d(0, 110%, 0)",
-        },
-        to: {
-          transform: "translate3d(0, 0, 0)",
-        },
-      },
       {
         from: {
           height: "0",
           minHeight: "0",
           maxHeight: "0",
+          opacity: 0,
         },
         to: {
+          opacity: 0,
         },
       },
       {
         from: {
-          opactity: 0,
+          opacity: 0,
         },
         to: {
           opacity: 1,
@@ -83,7 +44,8 @@ const useStyles = makeStyles({
   },
 
   fadeOut: {
-    animationDuration: "400ms",
+    animationDuration: "400ms, 200ms",
+    animationDelay: "0ms, 400ms",
     animationName: [
       {
         from: {
@@ -93,13 +55,24 @@ const useStyles = makeStyles({
           opacity: 0,
         },
       },
+      {
+        from: {
+          opacity: 0,
+        },
+        to: {
+          opacity: 0,
+          height: 0,
+          maxHeight: 0,
+          minHeight: 0,
+        },
+      },
     ],
   },
 });
 
 export const Toast: React.FC<ToastProps> = (props) => {
   const styles = useStyles();
-  const { isIn, children, closeToast, deleteToast, autoClose = 3000, position } = props;
+  const { isIn, children, closeToast, deleteToast, autoClose = 3000 } = props;
   const { eventHandlers, toastRef } = useToast(props);
 
   React.useEffect(() => {
@@ -111,14 +84,14 @@ export const Toast: React.FC<ToastProps> = (props) => {
       in={isIn}
       unmountOnExit
       mountOnEnter
-      timeout={300}
+      timeout={500}
       onExited={deleteToast}
     >
       <ToastContextProvider value={{ closeToast }}>
         <div
           className={mergeClasses(
             styles.toast,
-            isIn && position.startsWith('bottom') ? styles.slide : styles.slideVertical,
+            isIn && styles.slide,
             !isIn && styles.fadeOut
           )}
           ref={toastRef}

@@ -54,6 +54,8 @@ export function useToastContainer(props: ToastContainerProps) {
     getToast: (id) => toastToRender.get(id),
   }).current;
 
+  const { offset = { horizontal: 0, vertical: 0} } = props;
+
   React.useEffect(() => {
     instance.containerId = props.containerId;
     const clearToasts = (toastId: Id | undefined) =>
@@ -250,63 +252,48 @@ export function useToastContainer(props: ToastContainerProps) {
     });
   }
 
-  let positions: object = {
-    "top-right": {
-      top: 0,
-      right: 0,
-    },
-
-    "top-left": {
-      top: 0,
-      left: 0,
-    },
-
-    "bottom-right": {
-      bottom: 0,
-      right: 0,
-    },
-
-    "bottom-left": {
-      bottom: 0,
-      left: 0,
-    },
-  };
-
-  if (props.boundary) {
-    console.log(props.boundary);
-    const rect = props.boundary.getBoundingClientRect();
-
-    positions = {
-      "top-right": {
-        top: rect.top,
-        left: rect.right,
-        transform: "translateX(-100%)",
-      },
-
-      "top-left": {
-        top: rect.top,
-        left: rect.left,
-      },
-
-      "bottom-right": {
-        top: rect.bottom,
-        left: rect.right,
-        transform: "translate(-100%, -100%)",
-      },
-
-      "bottom-left": {
-        top: rect.bottom,
-        left: rect.left,
-        transform: "translateY(-100%)",
-      },
+  function getPositionStyles(position: ToastPosition) {
+    const containerStyles: React.CSSProperties = {
+      position: "fixed",
     };
+
+    let positionStyles: React.CSSProperties = {};
+    const { horizontal, vertical } = offset;
+    switch (position) {
+      case "top-left":
+        positionStyles = {
+          top: 0 + vertical,
+          left: 0 + horizontal,
+        };
+        break;
+      case "top-right":
+        positionStyles = {
+          top: 0 + vertical,
+          right: 0 + horizontal,
+        };
+        break;
+      case "bottom-left":
+        positionStyles = {
+          bottom: 0 + vertical,
+          left: 0 + horizontal,
+        };
+        break;
+      case "bottom-right":
+        positionStyles = {
+          bottom: 0 + vertical,
+          right: 0 + horizontal,
+        };
+        break;
+    }
+
+    Object.assign(containerStyles, positionStyles);
+    return containerStyles;
   }
 
   return {
     getToastToRender,
     containerRef,
     isToastActive,
-    boundary: props.boundary,
-    positions,
+    getPositionStyles,
   };
 }

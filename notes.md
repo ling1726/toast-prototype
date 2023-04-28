@@ -20,7 +20,16 @@
 - ✅ middle toast dismissing earlier based on button
 - ✅ dismiss all toasts 
 - ✅ different positions
-- different toast boundaries
-- priority toasts
-- pause on blur
+- ✅ offset
+- Updates
 - sliding after middle toast is dismissed
+- pause on blur
+- priority toasts
+
+## ally 
+
+- specific live region, separate for alerts/status, aria-atomic issues
+- control narration for each update to a toast
+- shortcut to perform action in toast
+- alternate means to access toasts - relevant beyond on the screen
+- support for keyboard shortcut

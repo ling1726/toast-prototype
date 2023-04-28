@@ -150,7 +150,10 @@ export interface ToastContainerProps extends CommonOptions {
 
   targetDocument: Document | null | undefined;
 
-  boundary?: HTMLElement;
+  offset?: {
+    horizontal: number;
+    vertical: number;
+  }
 }
 
 export interface ToastTransitionProps {

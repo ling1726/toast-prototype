@@ -1,14 +1,13 @@
 import { Portal } from "@fluentui/react-portal";
 import React from "react";
-import { ToastPosition, useToastContainer } from "../react-toastify";
+import { ToastContainerProps, ToastPosition, useToastContainer } from "../react-toastify";
 import { Toast } from "./Toast";
 import { makeStyles, mergeClasses, shorthands } from "@griffel/react";
 
-interface ToasterProps {
+interface ToasterProps extends Pick<ToastContainerProps, 'offset'> {
   position: ToastPosition;
   targetDocument: Document | null | undefined;
   limit?: number;
-  boundary?: HTMLElement;
 }
 
 const useStyles = makeStyles({
@@ -18,11 +17,11 @@ const useStyles = makeStyles({
 });
 
 export const Toaster: React.FC<ToasterProps> = (props) => {
-  const { targetDocument, limit, boundary } = props;
-  const { containerRef, getToastToRender, isToastActive, positions } = useToastContainer({
+  const { targetDocument, limit, offset } = props;
+  const { containerRef, getToastToRender, isToastActive, getPositionStyles} = useToastContainer({
     targetDocument,
     limit,
-    boundary,
+    offset,
   });
 
 
@@ -34,9 +33,8 @@ export const Toaster: React.FC<ToasterProps> = (props) => {
         ref={containerRef}
       >
         {getToastToRender((position, toasts) => {
-          const positionStyles = positions[position];
           return (
-            <div key={position} style={positionStyles} className={mergeClasses(styles.container)}>
+            <div key={position} style={getPositionStyles(position)} className={mergeClasses(styles.container)}>
               {toasts.map(({ content, props: toastProps }, i) => {
                 return (
                   <Toast
